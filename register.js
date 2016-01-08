@@ -1,5 +1,4 @@
 var request = require('request-promise');
-var q = require('q');
 
 var redirectURI = 'http://localhost:2000/oauth2_callback';
 var loginProvider = 'xtrac://localhost:2000';
