@@ -5,8 +5,8 @@ var loginProvider = 'xtrac://localhost:2000';
 var devsURL = 'http://localhost:3000/v1/developers/';
 var appsURL = 'http://localhost:3000/v1/applications';
 var oauthURL = 'http://localhost:3000/oauth2/token';
-var portalClientId = '7d8801d5-154c-460b-5206-48e4485e99ff';
-var clientSecret = 'iZm+Uahj6ImDT+/dvGK52KHSnstbhdU47TieZacZ6jY=';
+var portalClientId = '5d130f17-2fe5-4462-4e9d-9b6eb2d806e8';
+var clientSecret = '0KizQCINnU0DtIkgwGs5ipc1AMt3WfUU1lNt6zTQTu4=';
 var username = 'user';
 var password = 'password';
 
@@ -101,6 +101,12 @@ getPortalATPromise()
   .then(retrieveApp)
   .then(function(r){
     console.log(r);
+    console.log("Try out:")
+    app = JSON.parse(r)
+    console.log("http://localhost:3000/oauth2/authorize?client_id=" +
+      app.clientID + "&response_type=token&redirect_uri=http://localhost:2000/oauth2_callback"
+    )
+
   })
   .catch(function(o) {
     console.log(o);
