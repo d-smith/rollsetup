@@ -9,6 +9,7 @@ var portalClientId = 'e17bc7ff-4e3b-44a7-442f-54c9066a55a3';
 var clientSecret = 'Wt7ynCfjIxhKjf7A65mKLyxNNXOjTIQVj7Kb+ToVPkM=';
 var username = 'user';
 var password = 'password';
+var appClientID = 'd51d75db-9bf3-4097-4b46-71818348b1ee';
 
 var AT = '';
 
@@ -27,10 +28,8 @@ function getPortalATPromise() {
   });
 }
 
-
 function printAT(body) {
-  parsed = JSON.parse(body);
-  console.log(parsed.access_token)
+  console.log("Access token", AT);
 }
 
 function extractAT(body) {
@@ -38,51 +37,8 @@ function extractAT(body) {
   AT = parsed.access_token;
 }
 
-function createDev(ATBody) {
-  //var parsed = JSON.parse(ATBody);
-  //var accessToken = parsed.access_token;
-
-  var portalDev = {
-    email:'new@dev.com',
-    firstName:'New',
-    lastName:'Dev'
-  };
-
-  //AT = accessToken;
-
-  return request({
-    followAllRedirects: true,
-    url: devsURL + 'new@dev.com',
-    method: 'PUT',
-    json: portalDev,
-    headers: {
-      'Authorization':'Bearer ' + AT
-    }
-  });
-}
-
-
-function createApp() {
-  var portalApp = {
-    applicationName:'sample dev app',
-    developerEmail:'new@dev.com',
-    redirectURI:redirectURI,
-    loginProvider:loginProvider
-  };
-
-  return request({
-    followAllRedirects: true,
-    url: appsURL,
-    method: 'POST',
-    json: portalApp,
-    headers: {
-      'Authorization':'Bearer ' + AT
-    }
-  });
-}
-
-function retrieveApp(createResp) {
-  var clientID = createResp.client_id;
+function retrieveApp() {
+  var clientID = appClientID;
   console.log('App details for %s', clientID);
   return request({
     followAllRedirects: true,
@@ -94,19 +50,34 @@ function retrieveApp(createResp) {
   });
 }
 
+function updateApp(r) {
+  var updated = {
+    applicationName:'sample dev app ok',
+    developerEmail:'new@dev.com',
+    redirectURI:redirectURI,
+    loginProvider:loginProvider
+  };
+
+  updateUrl = appsURL + '/' + appClientID;
+  console.log("send update to", updateUrl);
+  return request({
+    followAllRedirects: true,
+    url: updateUrl,
+    method: 'PUT',
+    json: updated,
+    headers: {
+      'Authorization':'Bearer ' + AT
+    }
+  });
+}
+
 getPortalATPromise()
   .then(extractAT)
-  .then(createDev)
-  .then(createApp)
+  .then(printAT)
+  .then(updateApp)
   .then(retrieveApp)
   .then(function(r){
     console.log(r);
-    console.log("Try out:")
-    app = JSON.parse(r)
-    console.log("http://localhost:3000/oauth2/authorize?client_id=" +
-      app.clientID + "&response_type=token&redirect_uri=http://localhost:2000/oauth2_callback"
-    )
-
   })
   .catch(function(o) {
     console.log(o);
